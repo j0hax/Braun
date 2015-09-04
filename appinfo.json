@@ -1,0 +1,22 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "johannesarnold@att.net",
+    "longName": "Braun",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "Braun",
+    "targetPlatforms": [
+        "basalt"
+    ],
+    "uuid": "4b70ed09-6521-4154-9d1b-09c4263fac5b",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
