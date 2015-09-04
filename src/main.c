@@ -39,7 +39,7 @@ static void update_proc(Layer* layer, GContext* ctx) {
         .x = (center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[0] / 12) * 32 / TRIG_MAX_RATIO), .y = (center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[0] / 12) * 32 / TRIG_MAX_RATIO)
     };
     GPoint min = (GPoint) {
-        .x = (center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 64 / TRIG_MAX_RATIO), .y = (center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 64 / TRIG_MAX_RATIO)
+        .x = (center.x + sin_lookup(TRIG_MAX_ANGLE * (timedata[1] / 60 + timedata[2] / 60)) * 64 / TRIG_MAX_RATIO), .y = (center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 64 / TRIG_MAX_RATIO)
     };
     GPoint sec0 = (GPoint) {
         .x = (center.x + -sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 16 / TRIG_MAX_RATIO), .y = (center.y + cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 16 / TRIG_MAX_RATIO)
