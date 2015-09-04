@@ -53,7 +53,7 @@ static void update_proc(Layer* layer, GContext* ctx) {
     graphics_draw_line(ctx, center, sec0);
     graphics_draw_line(ctx, center, sec1);
     graphics_context_set_fill_color(ctx, GColorYellow );
-    graphics_fill_circle(ctx, center, 2);
+    graphics_fill_circle(ctx, center, 3);
 }
 
 static void main_window_load(Window* window) {
