@@ -11,8 +11,6 @@ static void update_proc(Layer* layer, GContext* ctx) {
     };
     graphics_context_set_stroke_color(ctx, GColorDarkGray);
     for (int i = 0; i < 60; i++) {
-        // y start = 147
-        // x start = 0
         // tic0 = inner
         // tic1 = outer
         GPoint tic0, tic1;
@@ -47,8 +45,10 @@ static void update_proc(Layer* layer, GContext* ctx) {
     GPoint sec1 = (GPoint) {
         .x = (center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 64 / TRIG_MAX_RATIO), .y = (center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 64 / TRIG_MAX_RATIO)
     };
+    graphics_context_set_stroke_width(ctx, 2);
     graphics_draw_line(ctx, center, hrs);
     graphics_draw_line(ctx, center, min);
+    graphics_context_set_stroke_width(ctx, 1);
     graphics_context_set_stroke_color(ctx, GColorYellow );
     graphics_draw_line(ctx, center, sec0);
     graphics_draw_line(ctx, center, sec1);
