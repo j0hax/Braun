@@ -10,7 +10,7 @@ static void update_proc(Layer* layer, GContext* ctx) {
     GRect bounds = layer_get_bounds(layer);
     GPoint center = grect_center_point(&bounds);
   
-    graphics_context_set_stroke_color(ctx, GColorWhite);
+    graphics_context_set_stroke_color(ctx, GColorLightGray);
     // draw 60 minute ticks around clock
     for (int i = 0; i < 60; i++) {
         // tic0 = start of inner point
@@ -36,14 +36,14 @@ static void update_proc(Layer* layer, GContext* ctx) {
         graphics_draw_line(ctx, tic0, tic1);
     }
     // draw outline and hands
-    graphics_draw_circle(ctx, center, 71);
     graphics_context_set_stroke_color(ctx, GColorWhite);
+    graphics_draw_circle(ctx, center, 71);
     // basically, take the center coordinate, run the current time divided by the highest through sin() and cos(), set the length to 64 for minutes, 32 for hours
     GPoint hrs = (GPoint) {
-        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[0] / 12) * 32 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[0] / 12) * 32 / TRIG_MAX_RATIO)
+        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[0] / 12) * 40 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[0] / 12) * 40 / TRIG_MAX_RATIO)
     };
     GPoint min = (GPoint) {
-        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 64 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 64 / TRIG_MAX_RATIO)
+        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 61 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 61 / TRIG_MAX_RATIO)
     };
     
     // seconds get some extra attention here-- the same as above, but with an extra little counterweight type thing on the opposite site
@@ -51,21 +51,21 @@ static void update_proc(Layer* layer, GContext* ctx) {
         .x = (int16_t)(center.x + -sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 9 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 9 / TRIG_MAX_RATIO)
     };
     GPoint sec1 = (GPoint) {
-        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 64 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 64 / TRIG_MAX_RATIO)
+        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 61 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 61 / TRIG_MAX_RATIO)
     };
     
     // set the width/color for everything and draw
-    graphics_context_set_stroke_width(ctx, 3);
+    graphics_context_set_stroke_width(ctx, 4);
     graphics_draw_line(ctx, center, hrs);
-    graphics_context_set_stroke_width(ctx, 2);
+    graphics_context_set_stroke_width(ctx, 3);
     graphics_draw_line(ctx, center, min);
-    graphics_context_set_stroke_width(ctx, 1);
+    graphics_context_set_stroke_width(ctx, 2);
     graphics_context_set_stroke_color(ctx, GColorYellow );
     graphics_draw_line(ctx, center, sec1);
-    graphics_context_set_stroke_width(ctx, 3);
+    graphics_context_set_stroke_width(ctx, 4);
     graphics_draw_line(ctx, center, sec0);
     graphics_context_set_fill_color(ctx, GColorYellow );
-    graphics_fill_circle(ctx, center, 3);
+    graphics_fill_circle(ctx, center, 4);
     graphics_context_set_stroke_color(ctx, GColorBlack);
     graphics_draw_pixel(ctx, center);
 }
