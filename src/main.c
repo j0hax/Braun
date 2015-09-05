@@ -55,17 +55,17 @@ static void update_proc(Layer* layer, GContext* ctx) {
     };
     
     // set the width/color for everything and draw
-    graphics_context_set_stroke_width(ctx, 4);
+    graphics_context_set_stroke_width(ctx, 5);
     graphics_draw_line(ctx, center, hrs);
     graphics_context_set_stroke_width(ctx, 3);
     graphics_draw_line(ctx, center, min);
-    graphics_context_set_stroke_width(ctx, 2);
+    graphics_context_set_stroke_width(ctx, 3);
     graphics_context_set_stroke_color(ctx, GColorYellow );
     graphics_draw_line(ctx, center, sec1);
-    graphics_context_set_stroke_width(ctx, 4);
+    graphics_context_set_stroke_width(ctx, 5);
     graphics_draw_line(ctx, center, sec0);
     graphics_context_set_fill_color(ctx, GColorYellow );
-    graphics_fill_circle(ctx, center, 4);
+    graphics_fill_circle(ctx, center, 5);
     graphics_context_set_stroke_color(ctx, GColorBlack);
     graphics_draw_pixel(ctx, center);
 }
