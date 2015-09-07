@@ -13,10 +13,10 @@ static void draw_hands(Layer* layer, GContext* ctx) {
     graphics_context_set_stroke_color(ctx, GColorWhite);
     // basically, take the center coordinate, run the current time divided by the highest through sin() and cos(), set the length to 64 for minutes, 32 for hours
     GPoint hrs = (GPoint) {
-        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[0] / 12) * 40 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[0] / 12) * 40 / TRIG_MAX_RATIO)
+        .x = (int16_t)(center.x + sin_lookup((TRIG_MAX_ANGLE * timedata[0] / 12) + (TRIG_MAX_ANGLE * timedata[1] / 720.0f)) * 40 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup((TRIG_MAX_ANGLE * timedata[0] / 12) + (TRIG_MAX_ANGLE * timedata[1] / 720.0f)) * 40 / TRIG_MAX_RATIO)
     };
     GPoint min = (GPoint) {
-        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 61 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[1] / 60) * 61 / TRIG_MAX_RATIO)
+        .x = (int16_t)(center.x + sin_lookup((TRIG_MAX_ANGLE * timedata[1] / 60) + (TRIG_MAX_ANGLE * timedata[2] / 3600.0f)) * 61 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup((TRIG_MAX_ANGLE * timedata[1] / 60) + (TRIG_MAX_ANGLE * timedata[2] / 3600.0f)) * 61 / TRIG_MAX_RATIO)
     };
     
     // seconds get some extra attention here-- the same as above, but with an extra little counterweight type thing on the opposite site
