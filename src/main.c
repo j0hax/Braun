@@ -2,14 +2,13 @@
 
 static Window* s_window;
 static Layer* s_face_layer;
-  static Layer* s_hands_layer;
+static Layer* s_hands_layer;
 static GPoint center;
 
 static int timedata[3];
 
 static void draw_hands(Layer* layer, GContext* ctx) {
     // define center
-  
     graphics_context_set_stroke_color(ctx, GColorWhite);
     // basically, take the center coordinate, run the current time divided by the highest through sin() and cos(), set the length to 64 for minutes, 32 for hours
     GPoint hrs = (GPoint) {
@@ -18,7 +17,6 @@ static void draw_hands(Layer* layer, GContext* ctx) {
     GPoint min = (GPoint) {
         .x = (int16_t)(center.x + sin_lookup((TRIG_MAX_ANGLE * timedata[1] / 60) + (TRIG_MAX_ANGLE * timedata[2] / 3600.0f)) * 61 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup((TRIG_MAX_ANGLE * timedata[1] / 60) + (TRIG_MAX_ANGLE * timedata[2] / 3600.0f)) * 61 / TRIG_MAX_RATIO)
     };
-    
     // seconds get some extra attention here-- the same as above, but with an extra little counterweight type thing on the opposite site
     GPoint sec0 = (GPoint) {
         .x = (int16_t)(center.x + -sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 9 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 9 / TRIG_MAX_RATIO)
@@ -26,7 +24,6 @@ static void draw_hands(Layer* layer, GContext* ctx) {
     GPoint sec1 = (GPoint) {
         .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 61 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 61 / TRIG_MAX_RATIO)
     };
-    
     // set the width/color for everything and draw
     graphics_context_set_stroke_width(ctx, 5);
     graphics_draw_line(ctx, center, hrs);
@@ -44,7 +41,6 @@ static void draw_hands(Layer* layer, GContext* ctx) {
 }
 
 static void draw_face(Layer* layer, GContext* ctx) {
-  
     graphics_context_set_stroke_color(ctx, GColorLightGray);
     // draw 60 minute ticks around clock
     for (int i = 0; i < 60; i++) {
@@ -53,7 +49,6 @@ static void draw_face(Layer* layer, GContext* ctx) {
         GPoint tic0, tic1;
         // draw the hour ones longer
         if (i % 5 == 0) {
-
             tic0 = (GPoint) {
                 .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 55 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 55 / TRIG_MAX_RATIO)
             };
@@ -108,10 +103,8 @@ static void init() {
         .load = main_window_load,
          .unload = main_window_unload
     });
-  
     GRect bounds = layer_get_bounds(window_get_root_layer(s_window));
     center = grect_center_point(&bounds);
-  
     tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
     window_stack_push(s_window, true);
 }
