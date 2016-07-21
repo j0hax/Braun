@@ -1,38 +1,45 @@
 #include <pebble.h>
+#include <paths.h>
 
 static Window* s_window;
 static Layer* s_face_layer;
 static Layer* s_hands_layer;
 static GPoint center;
 
-static int timedata[3];
+static GPath* hour_ptr;
+static GPath* minute_ptr;
+static GPath* second_ptr;
+static GPath* chevron;
+
+static int timedata[4];
 
 static void draw_hands(Layer* layer, GContext* ctx) {
-    // define center
-    graphics_context_set_stroke_color(ctx, GColorWhite);
-    // basically, take the center coordinate, run the current time divided by the highest through sin() and cos(), set the length to 64 for minutes, 32 for hours
-    GPoint hrs = (GPoint) {
-        .x = (int16_t)(center.x + sin_lookup((TRIG_MAX_ANGLE * timedata[0] / 12) + (TRIG_MAX_ANGLE * timedata[1] / 720.0f)) * 40 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup((TRIG_MAX_ANGLE * timedata[0] / 12) + (TRIG_MAX_ANGLE * timedata[1] / 720.0f)) * 40 / TRIG_MAX_RATIO)
-    };
-    GPoint min = (GPoint) {
-        .x = (int16_t)(center.x + sin_lookup((TRIG_MAX_ANGLE * timedata[1] / 60) + (TRIG_MAX_ANGLE * timedata[2] / 3600.0f)) * 61 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup((TRIG_MAX_ANGLE * timedata[1] / 60) + (TRIG_MAX_ANGLE * timedata[2] / 3600.0f)) * 61 / TRIG_MAX_RATIO)
-    };
+    gpath_rotate_to(hour_ptr, (TRIG_MAX_ANGLE * timedata[0]/12) + (TRIG_MAX_ANGLE * timedata[1]/720.0f)); 
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    gpath_draw_filled(ctx, hour_ptr);
+    
+    // minute hand
+    gpath_rotate_to(minute_ptr, (TRIG_MAX_ANGLE * timedata[1]/60) + (TRIG_MAX_ANGLE * timedata[2]/3600.0f));
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    gpath_draw_filled(ctx, minute_ptr);
+   
+    // seconds hand DEPRECATED
+    /*gpath_rotate_to(second_ptr, (TRIG_MAX_ANGLE * (timedata[2]/60.0f))); 
+    graphics_context_set_fill_color(ctx, GColorYellow);
+    gpath_draw_filled(ctx, second_ptr);*/
+   
     // seconds get some extra attention here-- the same as above, but with an extra little counterweight type thing on the opposite site
     GPoint sec0 = (GPoint) {
-        .x = (int16_t)(center.x + -sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 9 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 9 / TRIG_MAX_RATIO)
+        .x = (int16_t)(center.x + -sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 18 / TRIG_MAX_RATIO),
+        .y = (int16_t)(center.y + cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 18 / TRIG_MAX_RATIO)
     };
     GPoint sec1 = (GPoint) {
-        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 61 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 61 / TRIG_MAX_RATIO)
+        .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 72 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * timedata[2] / 60) * 72 / TRIG_MAX_RATIO)
     };
-    // set the width/color for everything and draw
-    graphics_context_set_stroke_width(ctx, 5);
-    graphics_draw_line(ctx, center, hrs);
-    graphics_context_set_stroke_width(ctx, 3);
-    graphics_draw_line(ctx, center, min);
-    graphics_context_set_stroke_width(ctx, 3);
     graphics_context_set_stroke_color(ctx, GColorYellow );
+    graphics_context_set_stroke_width(ctx, 3);
     graphics_draw_line(ctx, center, sec1);
-    graphics_context_set_stroke_width(ctx, 5);
+    graphics_context_set_stroke_width(ctx, 6);
     graphics_draw_line(ctx, center, sec0);
     graphics_context_set_fill_color(ctx, GColorYellow );
     graphics_fill_circle(ctx, center, 5);
@@ -41,33 +48,56 @@ static void draw_hands(Layer* layer, GContext* ctx) {
 }
 
 static void draw_face(Layer* layer, GContext* ctx) {
+  
     graphics_context_set_stroke_color(ctx, GColorLightGray);
     // draw 60 minute ticks around clock
     for (int i = 0; i < 60; i++) {
-        // tic0 = start of inner point
-        // tic1 = end of outer point
-        GPoint tic0, tic1;
-        // draw the hour ones longer
-        if (i % 5 == 0) {
-            tic0 = (GPoint) {
-                .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 55 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 55 / TRIG_MAX_RATIO)
-            };
-            tic1 = (GPoint) {
-                .x = (int16_t)(tic0.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 16 / TRIG_MAX_RATIO), .y = (int16_t)(tic0.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 16 / TRIG_MAX_RATIO)
-            };
-        } else {
-            tic0 = (GPoint) {
-                .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 63 / TRIG_MAX_RATIO), .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 63 / TRIG_MAX_RATIO)
-            };
-            tic1 = (GPoint) {
-                .x = (int16_t)(tic0.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 8 / TRIG_MAX_RATIO), .y = (int16_t)(tic0.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 8 / TRIG_MAX_RATIO)
-            };
-        }
-        graphics_draw_line(ctx, tic0, tic1);
+     // tic0 = start of inner point
+     // tic1 = end of outer point
+      GPoint tic0, tic1;
+      // tic0 is the starting point from center, tic1 is the outer point of the tic
+      if (i % 5 == 0) {
+         // hour
+         tic0 = (GPoint) {
+            .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 69 / TRIG_MAX_RATIO),
+            .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 69 / TRIG_MAX_RATIO)
+         };
+         tic1 = (GPoint) {
+            .x = (int16_t)(tic0.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 15 / TRIG_MAX_RATIO),
+            .y = (int16_t)(tic0.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 15 / TRIG_MAX_RATIO)
+         };
+         graphics_context_set_stroke_width(ctx, 2);
+      } else {
+         // minute marks
+         tic0 = (GPoint) {
+            .x = (int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 74 / TRIG_MAX_RATIO),
+            .y = (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 74 / TRIG_MAX_RATIO)
+         };
+         tic1 = (GPoint) {
+            .x = (int16_t)(tic0.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 10 / TRIG_MAX_RATIO),
+            .y = (int16_t)(tic0.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 10 / TRIG_MAX_RATIO)
+         };
+         graphics_context_set_stroke_width(ctx, 1);
+      }
+      graphics_draw_line(ctx, tic0, tic1);
     }
-    // draw outline and hands
-    graphics_context_set_stroke_color(ctx, GColorWhite);
-    graphics_draw_circle(ctx, center, 71);
+   
+    // draw the date (new and complex how scary)
+    static char buf[] = "00000000000";    /* <-- implicit NUL-terminator at the end here */
+
+    snprintf(buf, sizeof(buf), "%d", timedata[3]);
+    
+    //GRect date_window = GRect(62, 108, 20, 20);
+    GRect date_window = GRect(62, 126, 20, 20);
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    graphics_context_set_text_color(ctx, GColorBlack);
+    graphics_fill_rect(ctx, date_window, 0, 0);
+    graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_14), 
+                     date_window, GTextOverflowModeWordWrap, 
+                     GTextAlignmentCenter, NULL);
+    graphics_context_set_fill_color(ctx, GColorRed);
+    gpath_rotate_to(chevron, TRIG_MAX_ANGLE * 0.5f);
+    gpath_draw_filled(ctx, chevron);
 }
 
 static void main_window_load(Window* window) {
@@ -79,13 +109,15 @@ static void main_window_load(Window* window) {
     layer_set_update_proc(s_hands_layer, draw_hands);
     layer_add_child(window_get_root_layer(window), s_face_layer);
     layer_add_child(window_get_root_layer(window), s_hands_layer);
-    layer_mark_dirty(s_face_layer);
     layer_mark_dirty(s_hands_layer);
 }
 
 static void main_window_unload(Window* window) {
     layer_destroy(s_face_layer);
     layer_destroy(s_hands_layer);
+    gpath_destroy(hour_ptr);
+    gpath_destroy(minute_ptr);
+    gpath_destroy(second_ptr);
 }
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
@@ -93,6 +125,7 @@ static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
     timedata[0] = tick_time->tm_hour % 12;
     timedata[1] = tick_time->tm_min;
     timedata[2] = tick_time->tm_sec;
+    timedata[3] = tick_time->tm_mday;
     layer_mark_dirty(s_hands_layer);
 }
 
@@ -100,11 +133,23 @@ static void init() {
     // initialize stuff you know the drill
     s_window = window_create();
     window_set_window_handlers(s_window, (WindowHandlers) {
-        .load = main_window_load,
-         .unload = main_window_unload
+       .load = main_window_load,
+       .unload = main_window_unload
     });
+   
     GRect bounds = layer_get_bounds(window_get_root_layer(s_window));
     center = grect_center_point(&bounds);
+    
+    hour_ptr = gpath_create(&HOUR_HAND_PATHINFO);
+    minute_ptr = gpath_create(&MINUTE_HAND_PATHINFO);
+    //second_ptr = gpath_create(&SECOND_HAND_PATHINFO);
+    chevron = gpath_create(&CHEVRON_PATHINFO);
+   
+    gpath_move_to(hour_ptr, center);
+    gpath_move_to(minute_ptr, center);
+    //gpath_move_to(second_ptr, center);
+    gpath_move_to(chevron, (GPoint){72,124});
+    
     tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
     window_stack_push(s_window, true);
 }

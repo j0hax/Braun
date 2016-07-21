@@ -1,0 +1,28 @@
+{
+    "author": "Johannes Arnold",
+    "dependencies": {},
+    "keywords": [],
+    "name": "braun",
+    "pebble": {
+        "capabilities": [
+            ""
+        ],
+        "displayName": "Braun 2.0",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": []
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "basalt",
+            "chalk"
+        ],
+        "uuid": "4b70ed09-6521-4154-9d1b-09c4263fac5b",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}
