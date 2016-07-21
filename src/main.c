@@ -88,7 +88,7 @@ static void draw_face(Layer* layer, GContext* ctx) {
     snprintf(buf, sizeof(buf), "%d", timedata[3]);
     
     //GRect date_window = GRect(62, 108, 20, 20);
-    GRect date_window = GRect(62, 126, 20, 20);
+    GRect date_window = GRect(center.x-10, 126, 20, 20);
     graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_context_set_text_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, date_window, 0, 0);
@@ -103,8 +103,8 @@ static void draw_face(Layer* layer, GContext* ctx) {
 static void main_window_load(Window* window) {
     // self-explanatory: make the main window black with one full-screen layer to display the time
     window_set_background_color(window, GColorBlack);
-    s_face_layer = layer_create(GRect(0, 0, 144, 168));
-    s_hands_layer = layer_create(GRect(0, 0, 144, 168));
+    s_face_layer = layer_create(layer_get_bounds(window_get_root_layer(s_window)));
+    s_hands_layer = layer_create(layer_get_bounds(window_get_root_layer(s_window)));
     layer_set_update_proc(s_face_layer, draw_face);
     layer_set_update_proc(s_hands_layer, draw_hands);
     layer_add_child(window_get_root_layer(window), s_face_layer);
@@ -148,7 +148,7 @@ static void init() {
     gpath_move_to(hour_ptr, center);
     gpath_move_to(minute_ptr, center);
     //gpath_move_to(second_ptr, center);
-    gpath_move_to(chevron, (GPoint){72,124});
+    gpath_move_to(chevron, (GPoint){center.x,124});
     
     tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
     window_stack_push(s_window, true);
