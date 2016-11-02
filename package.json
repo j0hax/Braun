@@ -4,10 +4,7 @@
     "keywords": [],
     "name": "braun",
     "pebble": {
-        "capabilities": [
-            ""
-        ],
-        "displayName": "Braun 2.0",
+        "displayName": "Braun",
         "enableMultiJS": true,
         "messageKeys": [],
         "projectType": "native",
@@ -17,12 +14,13 @@
         "sdkVersion": "3",
         "targetPlatforms": [
             "basalt",
-            "chalk"
+            "chalk",
+            "emery"
         ],
         "uuid": "4b70ed09-6521-4154-9d1b-09c4263fac5b",
         "watchapp": {
             "watchface": true
         }
     },
-    "version": "2.1.0"
+    "version": "3.1.0"
 }
