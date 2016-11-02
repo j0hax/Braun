@@ -45,6 +45,9 @@ static void draw_hands(Layer* layer, GContext* ctx) {
 
 // draws face onto the given layer
 static void draw_face(Layer* layer, GContext* ctx) {
+  
+  static char buf[] = "00000000000";
+  
   graphics_context_set_stroke_color(ctx, GColorLightGray);
 
   // draw 60 minute ticks around clock
@@ -65,6 +68,19 @@ static void draw_face(Layer* layer, GContext* ctx) {
          .y = (int16_t)(tic0.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 15 / TRIG_MAX_RATIO)
       };
       graphics_context_set_stroke_width(ctx, 2);
+      
+      /*if (i != 30) {
+        GRect HourText = GRect((int16_t)(center.x + sin_lookup(TRIG_MAX_ANGLE * i / 60) * 54 / TRIG_MAX_RATIO)-10,
+                               (int16_t)(center.y + -cos_lookup(TRIG_MAX_ANGLE * i / 60) * 54 / TRIG_MAX_RATIO)-10,
+                               20, 20);
+        
+        snprintf(buf, sizeof(buf), "%d", i/5);
+        graphics_context_set_text_color(ctx, GColorWhite);
+        graphics_draw_text(ctx, buf, fonts_get_system_font(FONT_KEY_GOTHIC_18),
+                       HourText, GTextOverflowModeWordWrap,
+                       GTextAlignmentCenter, NULL);
+        
+      }*/
 
     } else {
       // minute marks
@@ -83,11 +99,10 @@ static void draw_face(Layer* layer, GContext* ctx) {
   }
 
   // draw the date (new and complex how scary)
-  static char buf[] = "00000000000";    /* <-- implicit NUL-terminator at the end here */
   snprintf(buf, sizeof(buf), "%d", timedata[3]);
-  int yDate = center.y + layer_get_frame(s_face_layer).size.h / 5;
-  int xDate = center.x - 10;
-  GRect date_window = GRect(xDate, yDate, 20, 20);
+  int yDate = center.y + layer_get_frame(s_face_layer).size.h / 4;
+  int xDate = center.x - 6;
+  GRect date_window = GRect(xDate, yDate, 12, 18);
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_context_set_text_color(ctx, GColorBlack);
   graphics_fill_rect(ctx, date_window, 0, 0);
@@ -95,7 +110,7 @@ static void draw_face(Layer* layer, GContext* ctx) {
                      date_window, GTextOverflowModeWordWrap,
                      GTextAlignmentCenter, NULL);
   graphics_context_set_fill_color(ctx, GColorRed);
-  gpath_move_to(chevron, GPoint(xDate + 10, yDate - 3));
+  gpath_move_to(chevron, GPoint(xDate + 6, yDate - 3));
   gpath_rotate_to(chevron, TRIG_MAX_ANGLE * 0.5f);
   gpath_draw_filled(ctx, chevron);
 }
