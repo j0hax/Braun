@@ -11,8 +11,10 @@ static GPath* minute_ptr;
 static GPath* second_ptr;
 static GPath* chevron;
 
-static int timedata[4];
+static GBitmap *logo;
+static BitmapLayer *logo_layer;
 
+static int timedata[4];
 
 // Draws hands onto the given layer
 static void draw_hands(Layer* layer, GContext* ctx) {
@@ -46,7 +48,7 @@ static void draw_hands(Layer* layer, GContext* ctx) {
 // draws face onto the given layer
 static void draw_face(Layer* layer, GContext* ctx) {
   
-  static char buf[] = "00000000000";
+  static char buf[] = "00";
   
   graphics_context_set_stroke_color(ctx, GColorLightGray);
 
@@ -102,7 +104,7 @@ static void draw_face(Layer* layer, GContext* ctx) {
   snprintf(buf, sizeof(buf), "%d", timedata[3]);
   int yDate = center.y + layer_get_frame(s_face_layer).size.h / 4;
   int xDate = center.x - 6;
-  GRect date_window = GRect(xDate, yDate, 12, 18);
+  GRect date_window = GRect(xDate, yDate, 13, 18);
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_context_set_text_color(ctx, GColorBlack);
   graphics_fill_rect(ctx, date_window, 0, 0);
@@ -129,6 +131,11 @@ static void main_window_load(Window* window) {
   window_set_background_color(window, GColorBlack);
   s_face_layer = layer_create(layer_get_bounds(window_get_root_layer(s_window)));
   s_hands_layer = layer_create(layer_get_bounds(window_get_root_layer(s_window)));
+  logo = gbitmap_create_with_resource(RESOURCE_ID_LOGO);
+  int offset = (center.x-20);
+  logo_layer = bitmap_layer_create(GRect(offset, 50, 40, 12));
+  bitmap_layer_set_bitmap(logo_layer, logo);
+  layer_add_child(s_face_layer, bitmap_layer_get_layer(logo_layer));
   layer_set_update_proc(s_face_layer, draw_face);
   layer_set_update_proc(s_hands_layer, draw_hands);
   layer_add_child(window_get_root_layer(window), s_face_layer);
@@ -136,6 +143,8 @@ static void main_window_load(Window* window) {
 }
 
 static void main_window_unload(Window* window) {
+  gbitmap_destroy(logo);
+  bitmap_layer_destroy(logo_layer);
   layer_destroy(s_face_layer);
   layer_destroy(s_hands_layer);
   gpath_destroy(hour_ptr);

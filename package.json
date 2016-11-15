@@ -11,6 +11,12 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/logo",
+                    "name": "LOGO",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/Icon",
                     "menuIcon": true,
                     "name": "IMAGE_MENU_ICON",

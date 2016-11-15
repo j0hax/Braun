@@ -45,10 +45,10 @@ static const GPathInfo CHEVRON_PATHINFO = {
    .points = (GPoint []) {
       //X, Y
       {0, 0},
-      {7, 3},
+      {7, 4},
       {7, -2},
       {0, -5},
-      {-6, -2},
-      {-6, 3}
+      {-7, -2},
+      {-7, 4}
    }
 };
